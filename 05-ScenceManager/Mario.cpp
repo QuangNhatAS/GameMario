@@ -8,6 +8,7 @@
 #include "Goomba.h"
 #include "Portal.h"
 #include "Koopas.h"
+#include "SuperMushroom.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -113,6 +114,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CPortal *p = dynamic_cast<CPortal *>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
+			}
+			else if (dynamic_cast<CSuperMushroom*>(e->obj))
+			{
+				CSuperMushroom *sMushroom = dynamic_cast<CSuperMushroom*>(e->obj);
+				if (level == MARIO_LEVEL_SMALL)
+				{
+					level = MARIO_LEVEL_BIG;
+				}
 			}
 		}
 	}

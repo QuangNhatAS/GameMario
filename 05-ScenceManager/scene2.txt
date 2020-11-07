@@ -1,7 +1,8 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
 0	textures\marioo.png	255	255	255
-20	textures\misc.png	176	224	248
+20	textures\misc.png	166	185	255
+10	textures\enemies.png	3	26	110
 #50	textures\enemies.png	3	26	110
 30	textures\enemies-2.png	0	128	128
 
@@ -45,7 +46,7 @@
 # jump left
 10103	55	89	71	105	0
 #BRICK
-20001	408	225	424	241	20
+20001	254	188	270	204	20
 #GOOMBA
 30001	5	14	21	29	10
 30002	25	14	41	29	10
@@ -53,10 +54,10 @@
 30003	45	21	61	29	10
 
 #brick with question mark animation
-40001	300	117	316	133	20
-40002	318	117	334	133	20
-40003	336	117	352	133	20
-40004	355	117	370	133	20
+40001	157	188	173	204	20
+40002	176	188	192	204	20
+40003	196	188	212	204	20
+40004	215	188	231	204	20
 
 #KOOPAS
 #walk left
@@ -67,6 +68,9 @@
 50012	170	191	185	217	30
 #die
 50031	152	202	168	217	20
+
+#SUPER MUSHROOM
+60000	156	121	172	137	20
 
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
@@ -86,9 +90,9 @@
 #walk left big
 501	10011	100	10012	100	10013	100
 #walk right small
-502	10021	100	10022	100	10023	100
+502	10022	100	10023	100
 #walk left small
-503	10031	100	10032	100	10033	100
+503	10032	100	10033	100
 #die
 599	10099	100
 #jump big right
@@ -122,10 +126,11 @@
 #walk left
 801	50001	100	50002	100
 #walk right
-802	50011	100	50012	100'
+802	50011	100	50012	100
 #die
 803	50031	100
-
+#SUPER MUSHROOM
+1100	60000	100
 #
 # id	ani1	ani2	ani3
 #
@@ -140,16 +145,26 @@
 3	701	702
 #KOOPAS
 4	801	802	803
+#SUPER MUSHROOM
+5	1100
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 4 = SUPER MUSHROOM
 # MARIO
 0	10	0	1
 
 # KOOPAS
 3	20	124	4
+# GOOMBA
+2	200	135	3
+#2	260	135	3
+#2	320	135	3
+#2	480	135	3
+#2	500	135	3
 
+#SUPER MUSH ROOM
+4	350	135	5
 # BRICK 
 # --- platform (hint: I created the list using Excel!) ----
 1	0	150	2
@@ -184,11 +199,11 @@
 1	416	150	2
 1	432	150	2
 1	448	150	2
-#
+#question brick
 1	150	134	22
 
 
 # --- SCENE PORTAL ----
 # type	l	t	ani_set_id	r	b	scene_id
-50	300	98	0	380	150	1
+#50	300	98	0	380	150	1
 
