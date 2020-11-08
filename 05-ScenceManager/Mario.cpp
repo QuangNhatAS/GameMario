@@ -46,6 +46,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		untouchable = 0;
 	}
 
+	if (state == MARIO_STATE_STANDING)
+	{
+		y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
+		state = MARIO_STATE_IDLE;
+	}
+
 	// No collision occured, proceed normally
 	if (coEvents.size()==0)
 	{
@@ -117,7 +123,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CSuperMushroom*>(e->obj))
 			{
-				CSuperMushroom *sMushroom = dynamic_cast<CSuperMushroom*>(e->obj);
+				//CSuperMushroom *sMushroom = dynamic_cast<CSuperMushroom*>(e->obj);
 				if (level == MARIO_LEVEL_SMALL)
 				{
 					level = MARIO_LEVEL_BIG;
@@ -136,6 +142,12 @@ void CMario::Render()
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 	else
+		if (state == MARIO_STATE_SITING)
+		{
+			if (nx > 0) ani = MARIO_ANI_SITTING_RIGHT;
+			else ani = MARIO_ANI_SITTING_LEFT;
+		}
+	else
 	if (level == MARIO_LEVEL_BIG)
 	{
 		if (vx == 0)
@@ -144,16 +156,16 @@ void CMario::Render()
 			{
 				ani = MARIO_ANI_BIG_IDLE_RIGHT;
 				if (dy < 0) ani = MARIO_ANI_BIG_JUMP_RIGHT;
-				if (state == MARIO_STATE_SITING) 
+				/*if (state == MARIO_STATE_SITING) 
 				{
 					ani = MARIO_ANI_SITTING_RIGHT;
-				} 
+				}*/
 			}
 			else
 			{
 				ani = MARIO_ANI_BIG_IDLE_LEFT;
 				if (dy < 0) ani = MARIO_ANI_BIG_JUMP_LEFT;
-				if (state == MARIO_STATE_SITING) ani = MARIO_ANI_SITTING_LEFT;
+				//if (state == MARIO_STATE_SITING) ani = MARIO_ANI_SITTING_LEFT;
 			}
 		}
 		else if (vx > 0) 
@@ -210,6 +222,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_SITING:
 		vx = 0;
 		break;
+		
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		break;
