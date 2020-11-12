@@ -60,6 +60,12 @@ class CMario : public CGameObject
 	int untouchable;
 	DWORD untouchable_start;
 
+	int status;
+	bool isJumping;
+	long jumpTimer;
+
+	bool isSitting;
+
 	float start_x;			// initial position of Mario at scene
 	float start_y; 
 public: 

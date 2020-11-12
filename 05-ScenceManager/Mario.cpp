@@ -46,7 +46,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		untouchable = 0;
 	}
 
-	if (state == MARIO_STATE_STANDING)
+	if (state == MARIO_STATE_STANDING && level == MARIO_LEVEL_BIG)
 	{
 		y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
 		state = MARIO_STATE_IDLE;
@@ -127,6 +127,37 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (level == MARIO_LEVEL_SMALL)
 				{
 					level = MARIO_LEVEL_BIG;
+					y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
+				}
+			}
+			else if (dynamic_cast<CKoopas*>(e->obj))
+			{
+				CKoopas *koopas = dynamic_cast<CKoopas *>(e->obj);
+
+				// jump on top >> kill Goomba and deflect a bit 
+				if (e->ny < 0)
+				{
+					if (koopas->GetState() != GOOMBA_STATE_DIE)
+					{
+						koopas->SetState(GOOMBA_STATE_DIE);
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == 0)
+					{
+						if (koopas->GetState() != GOOMBA_STATE_DIE)
+						{
+							if (level > MARIO_LEVEL_SMALL)
+							{
+								level = MARIO_LEVEL_SMALL;
+								StartUntouchable();
+							}
+							else
+								SetState(MARIO_STATE_DIE);
+						}
+					}
 				}
 			}
 		}
@@ -141,35 +172,38 @@ void CMario::Render()
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
-	else
-		if (state == MARIO_STATE_SITING)
+	/*else
+		if (state == MARIO_STATE_SITING && level == MARIO_LEVEL_BIG)
 		{
 			if (nx > 0) ani = MARIO_ANI_SITTING_RIGHT;
 			else ani = MARIO_ANI_SITTING_LEFT;
-		}
+		}*/
 	else
 	if (level == MARIO_LEVEL_BIG)
 	{
+		
 		if (vx == 0)
 		{
 			if (nx > 0)
 			{
 				ani = MARIO_ANI_BIG_IDLE_RIGHT;
 				if (dy < 0) ani = MARIO_ANI_BIG_JUMP_RIGHT;
-				/*if (state == MARIO_STATE_SITING) 
+				if (state == MARIO_STATE_SITING) 
 				{
 					ani = MARIO_ANI_SITTING_RIGHT;
-				}*/
+				}
+				//if (state == MARIO_STATE_STANDING) y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
 			}
 			else
 			{
 				ani = MARIO_ANI_BIG_IDLE_LEFT;
 				if (dy < 0) ani = MARIO_ANI_BIG_JUMP_LEFT;
-				//if (state == MARIO_STATE_SITING) ani = MARIO_ANI_SITTING_LEFT;
+				if (state == MARIO_STATE_SITING) ani = MARIO_ANI_SITTING_LEFT;
+				//if (state == MARIO_STATE_STANDING) y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
 			}
 		}
 		else if (vx > 0) 
-			ani = MARIO_ANI_BIG_WALKING_RIGHT; 
+			ani = MARIO_ANI_BIG_WALKING_RIGHT;
 		else ani = MARIO_ANI_BIG_WALKING_LEFT;
 	}
 	else if (level == MARIO_LEVEL_SMALL)
