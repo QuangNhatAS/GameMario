@@ -43,6 +43,7 @@ void CKoopas::Render()
 	if (state == KOOPAS_STATE_DIE) {
 		ani = KOOPAS_ANI_DIE;
 	}
+	else if (state == KOOPAS_STATE_SHELL) ani = KOOPAS_ANI_SHELL;
 	else if (vx > 0) ani = KOOPAS_ANI_WALKING_RIGHT;
 	else if (vx <= 0) ani = KOOPAS_ANI_WALKING_LEFT;
 
@@ -57,12 +58,14 @@ void CKoopas::SetState(int state)
 	switch (state)
 	{
 	case KOOPAS_STATE_DIE:
+	case KOOPAS_STATE_SHELL:
 		y += KOOPAS_BBOX_HEIGHT - KOOPAS_BBOX_HEIGHT_DIE + 1;
 		vx = 0;
 		vy = 0;
 		break;
 	case KOOPAS_STATE_WALKING:
 		vx = KOOPAS_WALKING_SPEED;
+	
 	}
 
 }

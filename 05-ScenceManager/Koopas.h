@@ -11,9 +11,13 @@
 #define KOOPAS_STATE_WALKING 100
 #define KOOPAS_STATE_DIE 200
 
+#define KOOPAS_STATE_SHELL 3000
+
 #define KOOPAS_ANI_WALKING_LEFT 0
 #define KOOPAS_ANI_WALKING_RIGHT 1
 #define KOOPAS_ANI_DIE 2
+#define KOOPAS_ANI_SHELL	3
+#define KOOPAS_ANI_RUN	4
 
 class CKoopas : public CGameObject
 {

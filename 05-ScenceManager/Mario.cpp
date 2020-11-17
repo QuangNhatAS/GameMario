@@ -12,7 +12,7 @@
 
 CMario::CMario(float x, float y) : CGameObject()
 {
-	level = MARIO_LEVEL_BIG;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
 
@@ -123,11 +123,12 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CSuperMushroom*>(e->obj))
 			{
-				//CSuperMushroom *sMushroom = dynamic_cast<CSuperMushroom*>(e->obj);
+				CSuperMushroom *sMushroom = dynamic_cast<CSuperMushroom*>(e->obj);
 				if (level == MARIO_LEVEL_SMALL)
 				{
 					level = MARIO_LEVEL_BIG;
 					y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
+					sMushroom->SetPosition(x, y + 100);
 				}
 			}
 			else if (dynamic_cast<CKoopas*>(e->obj))
@@ -137,9 +138,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				// jump on top >> kill Goomba and deflect a bit 
 				if (e->ny < 0)
 				{
-					if (koopas->GetState() != GOOMBA_STATE_DIE)
+					if (koopas->GetState() != KOOPAS_STATE_SHELL)
 					{
-						koopas->SetState(GOOMBA_STATE_DIE);
+						koopas->SetState(KOOPAS_STATE_SHELL);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
@@ -147,7 +148,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					if (untouchable == 0)
 					{
-						if (koopas->GetState() != GOOMBA_STATE_DIE)
+						if (koopas->GetState() != KOOPAS_STATE_SHELL)
 						{
 							if (level > MARIO_LEVEL_SMALL)
 							{
