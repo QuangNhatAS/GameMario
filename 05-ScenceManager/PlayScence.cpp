@@ -21,6 +21,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 */
 
 #define SCENE_SECTION_UNKNOWN -1
+#define SCENE_SECTION_MAP 1
 #define SCENE_SECTION_TEXTURES 2
 #define SCENE_SECTION_SPRITES 3
 #define SCENE_SECTION_ANIMATIONS 4
@@ -51,6 +52,20 @@ void CPlayScene::_ParseSection_TEXTURES(string line)
 	int B = atoi(tokens[4].c_str());
 
 	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
+}
+
+void CPlayScene::_ParseSection_MAP(string line)
+{
+	vector<string> tokens = split(line);
+	if (tokens.size() < 6) return;
+	int texID = atoi(tokens[0].c_str());
+	int mapWidth = atoi(tokens[1].c_str());
+	int mapHeight = atoi(tokens[2].c_str());
+	string mapFile = tokens[3].c_str();
+	int tileWidth = atoi(tokens[4].c_str());
+	int tileHeight = atoi(tokens[5].c_str());
+
+	map = new TileMap(texID, mapWidth, mapHeight, mapFile, tileWidth, tileHeight);
 }
 
 void CPlayScene::_ParseSection_SPRITES(string line)
@@ -198,6 +213,7 @@ void CPlayScene::Load()
 		if (line[0] == '#') continue;	// skip comment lines	
 
 		if (line == "[TEXTURES]") { section = SCENE_SECTION_TEXTURES; continue; }
+		if (line == "[MAP]") { section = SCENE_SECTION_MAP; continue; }
 		if (line == "[SPRITES]") { 
 			section = SCENE_SECTION_SPRITES; continue; }
 		if (line == "[ANIMATIONS]") { 
@@ -214,12 +230,14 @@ void CPlayScene::Load()
 		switch (section)
 		{ 
 			case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+			case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
 			case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
 			case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 			case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 			case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		}
 	}
+	map->LoadTileSet();
 
 	f.close();
 
@@ -260,6 +278,7 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	map->Render();
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }
@@ -274,6 +293,7 @@ void CPlayScene::Unload()
 
 	objects.clear();
 	player = NULL;
+	delete map;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }

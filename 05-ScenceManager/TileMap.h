@@ -2,6 +2,7 @@
 #include "Textures.h"
 #include "Utils.h"
 #include "Sprites.h"
+#include "Game.h"
 
 #define TILE_MAP_WIDTH 16
 #define TILE_MAP_HEIGHT 16
@@ -24,5 +25,6 @@ private:
 public:
 	TileMap(int id, int mapWidth, int mapHeight, string mapFile, int tileWidth, int tileHeight);
 	void LoadTileSet();
+	void Render();
 };
 

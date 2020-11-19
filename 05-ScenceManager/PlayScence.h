@@ -8,16 +8,19 @@
 #include "Goomba.h"
 #include "Koopas.h"
 #include "SuperMushroom.h"
+#include "TileMap.h"
 
 
 class CPlayScene: public CScene
 {
 protected: 
+	TileMap *map;
 	CMario *player;					// A play scene has to have player, right? 
 
 	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_TEXTURES(string line);
+	void _ParseSection_MAP(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
 	void _ParseSection_ANIMATION_SETS(string line);

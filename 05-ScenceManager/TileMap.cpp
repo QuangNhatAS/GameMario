@@ -25,7 +25,7 @@ void TileMap::LoadTileSet()
 		{
 			int num = TILE_SPRITE_START + j * 16 + i;
 			sprites->Add(num, i * 16, j * 16, i * 16 + 16, j * 16 + 16, mapTex);
-			DebugOut(L"id %d l %d t %d r %d b %d", i * 16, j * 16, i * 16 + 16, j * 16 + 16);
+			DebugOut(L"id %d l %d t %d r %d b %d \n", i * 16, j * 16, i * 16 + 16, j * 16 + 16);
 		}
 	}
 
@@ -43,12 +43,36 @@ void TileMap::LoadTileSet()
 		while (pch != NULL)
 		{
 			mapMat[j * 100 + i] = atoi(pch);
-			DebugOut(L"%d", atoi(pch));
+			DebugOut(L"%d ", atoi(pch));
 			i++;
-			//token = strtok(NULL, " ");
+			pch = strtok(NULL, " ");
 		}
 		DebugOut(L"\n");
 	}
 	mapRow = j;
 	mapColumn = i;
+}
+
+void TileMap::Render()
+{
+	CSprites *sprites = CSprites::GetInstance();
+	float camposX;
+	float camposY;
+	CGame::GetInstance()->GetCamPos(camposX, camposY);
+
+	camposX = camposX / 16;
+	camposY = camposY / 16;
+
+	float camposX2 = camposX + (SCREEN_WIDTH / 16);
+	float camposY2 = camposY + (SCREEN_HEIGHT / 16);
+	if (camposX < 0) camposX = 0;
+	if (camposY < 0) camposY = 0;
+
+	for (int i = ceil(camposY) + 2; i < ceil(camposY2) - 1; i++)
+	{
+		for (int j = floorf(camposX); j < ceil(camposX2) - 1; j++)
+		{
+			sprites->Get(TILE_SPRITE_START + mapMat[i * 100 + j])->Draw(j * 16, i * 16);
+		}
+	}
 }
