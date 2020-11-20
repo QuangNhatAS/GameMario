@@ -6,6 +6,7 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "Portal.h"
+#include "Box.h"
 
 using namespace std;
 
@@ -34,7 +35,10 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath):
 #define OBJECT_TYPE_KOOPAS	3
 #define	OBJECT_TYPE_SUPERMUSHROOM	4
 
+
 #define OBJECT_TYPE_PORTAL	50
+#define OBJECT_TYPE_BOX		60
+#define OBJECT_TYPE_BIG_BOX	70
 
 #define MAX_SCENE_LINE 1024
 
@@ -180,6 +184,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			int scene_id = atoi(tokens[6].c_str());
 			obj = new CPortal(x, y, r, b, scene_id);
 		}
+	case OBJECT_TYPE_BOX:
+	{
+		float r = atof(tokens[4].c_str());
+		float b = atof(tokens[5].c_str());
+		obj = new CBox(x, y, r, b);
+	}
 		break;
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);

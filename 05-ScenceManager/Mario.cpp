@@ -72,8 +72,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		//	x += nx*abs(rdx); 
 		
 		// block every object first!
-		x += min_tx*dx + nx * 0.4f;
-		y += min_ty*dy + ny * 0.4f;
+		x += min_tx*dx + nx * 0.18f;
+		y += min_ty*dy + ny * 0.18f;
 
 		if (nx!=0) vx = 0;
 		if (ny!=0) vy = 0;
