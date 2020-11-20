@@ -30,7 +30,7 @@ void TileMap::LoadTileSet()
 	}
 
 	FILE *fileMap;
-	char output[400];
+	char output[600];
 
 	fileMap = fopen(this->mapFile.c_str(), "r");
 	int j = 0;
@@ -42,7 +42,7 @@ void TileMap::LoadTileSet()
 		i = 0;
 		while (pch != NULL)
 		{
-			mapMat[j * 100 + i] = atoi(pch);
+			mapMat[j * 1000 + i] = atoi(pch);
 			DebugOut(L"%d ", atoi(pch));
 			i++;
 			pch = strtok(NULL, " ");
@@ -68,11 +68,17 @@ void TileMap::Render()
 	if (camposX < 0) camposX = 0;
 	if (camposY < 0) camposY = 0;
 
-	for (int i = ceil(camposY) + 2; i < ceil(camposY2) - 1; i++)
+	for (int i = ceil(camposY) - 2; i < ceil(camposY2) - 1; i++)
 	{
-		for (int j = floorf(camposX); j < ceil(camposX2) - 1; j++)
+		for (int j = floorf(camposX); j < ceil(camposX2); j++)
 		{
-			sprites->Get(TILE_SPRITE_START + mapMat[i * 100 + j])->Draw(j * 16, i * 16);
+			sprites->Get(TILE_SPRITE_START + mapMat[i * 1000 + j])->Draw(j * 16, i * 16);
 		}
 	}
+}
+
+void TileMap::GetMapSize(int & width, int & height)
+{
+	width = mapColumn * TILE_MAP_WIDTH;
+	height = mapRow * TILE_MAP_HEIGHT;
 }

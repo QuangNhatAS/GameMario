@@ -26,5 +26,6 @@ public:
 	TileMap(int id, int mapWidth, int mapHeight, string mapFile, int tileWidth, int tileHeight);
 	void LoadTileSet();
 	void Render();
+	void GetMapSize(int &width, int &height);
 };
 
