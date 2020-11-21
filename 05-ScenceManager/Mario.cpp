@@ -9,6 +9,7 @@
 #include "Portal.h"
 #include "Koopas.h"
 #include "SuperMushroom.h"
+#include "BigBox.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
@@ -120,6 +121,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				CPortal *p = dynamic_cast<CPortal *>(e->obj);
 				CGame::GetInstance()->SwitchScene(p->GetSceneId());
+			}
+			else if (dynamic_cast<CBigBox *>(e->obj))
+			{
+				if(nx != 0) x += dx;
 			}
 			else if (dynamic_cast<CSuperMushroom*>(e->obj))
 			{
