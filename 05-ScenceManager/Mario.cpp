@@ -10,12 +10,17 @@
 #include "Koopas.h"
 #include "SuperMushroom.h"
 #include "BigBox.h"
+#include "Box.h"
+#include "Brick.h"
 
 CMario::CMario(float x, float y) : CGameObject()
 {
+	
 	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	SetState(MARIO_STATE_IDLE);
+	
+	isOnGround = false;
 
 	start_x = x; 
 	start_y = y; 
@@ -27,7 +32,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
-
 	// Simple fall down
 	vy += MARIO_GRAVITY*dt;
 
@@ -53,6 +57,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		state = MARIO_STATE_IDLE;
 	}
 
+	/*if (status = MARIO_STATUS_STANDUP && isSitting)
+	{
+		y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
+		status = MARIO_STATUS_NORMAL;
+		isSitting = false;
+	}*/
+
 	// No collision occured, proceed normally
 	if (coEvents.size()==0)
 	{
@@ -73,8 +84,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		//	x += nx*abs(rdx); 
 		
 		// block every object first!
-		x += min_tx*dx + nx * 0.18f;
-		y += min_ty*dy + ny * 0.18f;
+		x += min_tx*dx + nx * 0.1f;
+		y += min_ty*dy + ny * 0.1f;
+
 
 		if (nx!=0) vx = 0;
 		if (ny!=0) vy = 0;
@@ -124,7 +136,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			}
 			else if (dynamic_cast<CBigBox *>(e->obj))
 			{
+				isOnGround = true;
 				if(nx != 0) x += dx;
+			}
+			else if (dynamic_cast<CBox *>(e->obj))
+			{
+				isOnGround = true;
+			}
+			else if (dynamic_cast<CBrick *>(e->obj))
+			{
+				isOnGround = true;
 			}
 			else if (dynamic_cast<CSuperMushroom*>(e->obj))
 			{
@@ -178,34 +199,35 @@ void CMario::Render()
 	int ani = -1;
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
-	/*else
+	else
 		if (state == MARIO_STATE_SITING && level == MARIO_LEVEL_BIG)
 		{
 			if (nx > 0) ani = MARIO_ANI_SITTING_RIGHT;
 			else ani = MARIO_ANI_SITTING_LEFT;
-		}*/
+		}
 	else
 	if (level == MARIO_LEVEL_BIG)
 	{
+		if (abs(vy) > 0 && !isOnGround)
+		{
+			if (nx > 0) ani = MARIO_ANI_BIG_JUMP_RIGHT;
+			else ani = MARIO_ANI_BIG_JUMP_LEFT;
+		}
 		
-		if (vx == 0)
+		else if (vx == 0)
 		{
 			if (nx > 0)
 			{
 				ani = MARIO_ANI_BIG_IDLE_RIGHT;
-				if (dy < 0) ani = MARIO_ANI_BIG_JUMP_RIGHT;
 				if (state == MARIO_STATE_SITING) 
 				{
 					ani = MARIO_ANI_SITTING_RIGHT;
 				}
-				//if (state == MARIO_STATE_STANDING) y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
 			}
 			else
 			{
 				ani = MARIO_ANI_BIG_IDLE_LEFT;
-				if (dy < 0) ani = MARIO_ANI_BIG_JUMP_LEFT;
 				if (state == MARIO_STATE_SITING) ani = MARIO_ANI_SITTING_LEFT;
-				//if (state == MARIO_STATE_STANDING) y = y - (MARIO_BIG_BBOX_HEIGHT - MARIO_SITTING_BBOX_HEIGHT) - 5;
 			}
 		}
 		else if (vx > 0) 
@@ -214,29 +236,28 @@ void CMario::Render()
 	}
 	else if (level == MARIO_LEVEL_SMALL)
 	{
-		if (vx == 0)
+		
+		if (abs(vy) > 0 && !isOnGround)
 		{
-			if (nx > 0)
-			{
-				ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-				if (dy < 0) ani = MARIO_ANI_SMALL_JUMP_RIGHT;
-			}
-			else 
-			{
-				ani = MARIO_ANI_SMALL_IDLE_LEFT;
-				if (dy < 0) ani = MARIO_ANI_SMALL_JUMP_LEFT;
-			}
+			if (nx > 0) ani = MARIO_ANI_SMALL_JUMP_RIGHT;
+			else ani = MARIO_ANI_SMALL_JUMP_LEFT;
+		}
+		
+		else if (vx == 0)
+		{
+			if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
+			else ani = MARIO_ANI_SMALL_IDLE_LEFT;
 		}
 		else if (vx > 0)
 			ani = MARIO_ANI_SMALL_WALKING_RIGHT;
 		else ani = MARIO_ANI_SMALL_WALKING_LEFT;
+		
 	}
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 
 	animation_set->at(ani)->Render(x, y, alpha);
-
 	RenderBoundingBox();
 }
 
@@ -256,8 +277,13 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_JUMP:
 		// TODO: need to check if Mario is *current* on a platform before allowing to jump again
-		vy = -MARIO_JUMP_SPEED_Y;
-		break; 
+		if (isOnGround)
+		{
+			isOnGround = false;
+			vy = -MARIO_JUMP_SPEED_Y;
+		}
+		 
+		break;
 	case MARIO_STATE_IDLE:
 	case MARIO_STATE_SITING:
 		vx = 0;
